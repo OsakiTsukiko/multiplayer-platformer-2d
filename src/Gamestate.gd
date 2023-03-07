@@ -3,6 +3,7 @@ extends Node
 var main_menu_scene: Resource = load("res://src/MainMenu.tscn")
 var loading_menu_scene: Resource = load("res://src/LoadingMenu.tscn")
 var lobby_scene: Resource = load("res://src/Lobby.tscn")
+var level_scene: Resource = load("res://src/level/Level.tscn")
 
 const MAX_PLAYERS = 5
 
@@ -19,6 +20,9 @@ signal global_error
 
 # lobby scene signals
 signal ls_refresh_player_list
+
+# game scene signals
+signal player_tick_signal
 
 func _ready() -> void:
 	get_tree().connect("network_peer_connected", self, "_network_peer_connected")
@@ -47,6 +51,9 @@ func init_client(username: String, game_ip: String, game_port: int) -> void:
 	var peer := NetworkedMultiplayerENet.new()
 	peer.create_client(game_ip, game_port)
 	get_tree().network_peer = peer
+
+func stream_player_pos(pos: Vector2):
+	rpc("player_tick", pos)
 
 func start_game():
 	if (get_tree().is_network_server()):
@@ -105,5 +112,19 @@ remotesync func player_disconnected(peer_id: int):
 
 remotesync func start_game_rpc():
 	if (get_tree().get_rpc_sender_id() == 1):
-		# START GAME
+		get_tree().change_scene_to(level_scene)
+		in_match = true
 		pass
+
+remote func player_tick(pos: Vector2):
+	var sender: int = get_tree().get_rpc_sender_id()
+	for i in range(0, player_list.size()):
+		var player: Utils.Player = player_list[i]
+		if (player.peer_id == sender):
+			emit_signal("player_tick_signal", i, pos)
+
+func _on_NetworkTimer_timeout():
+	if (in_match):
+		for node in get_tree().get_nodes_in_group("network_node"):
+			if (node.has_method("_network_process")):
+				node._network_process()

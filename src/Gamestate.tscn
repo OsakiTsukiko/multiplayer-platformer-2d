@@ -4,3 +4,9 @@
 
 [node name="Gamestate" type="Node"]
 script = ExtResource( 1 )
+
+[node name="NetworkTimer" type="Timer" parent="."]
+process_mode = 0
+wait_time = 0.01
+
+[connection signal="timeout" from="NetworkTimer" to="." method="_on_NetworkTimer_timeout"]

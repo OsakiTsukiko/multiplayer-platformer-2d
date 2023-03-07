@@ -23,7 +23,8 @@ export var WALL_JUMP_TIME: float = 0.3
 export var DASH_TIME: float = 0.1
 export var DASH_POWER: float = 230000.0
 
-export var IS_DEBUGGING: bool = OS.is_debug_build()
+# export var IS_DEBUGGING: bool = OS.is_debug_build()
+export var IS_DEBUGGING: bool = false
 
 # VARIABLES
 var touching_ground: bool = false
@@ -37,21 +38,17 @@ var is_wall_jumping: bool = false
 
 var velocity: Vector2 = Vector2.ZERO
 
+func _network_process():
+	if (is_network_master()):
+		Gamestate.stream_player_pos(self.position)
+
 func _physics_process(delta):
-	if (IS_DEBUGGING):
-		prints(
-			"G",
-			ground_rc_1.is_colliding(),
-			ground_rc_2.is_colliding(),
-			"L",
-			left_rc.is_colliding(),
-			"R",
-			right_rc.is_colliding()
-		)
-	
-	ground_checks()
-	handle_input(delta)
-	do_physics(delta)
+	if (is_network_master()):
+		ground_checks()
+		handle_input(delta)
+		do_physics(delta)
+		
+		Gamestate.stream_player_pos(self.position)
 
 func ground_checks() -> void:
 	# checking for coyote time
