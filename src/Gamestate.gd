@@ -5,7 +5,9 @@ var loading_menu_scene: Resource = load("res://src/LoadingMenu.tscn")
 var lobby_scene: Resource = load("res://src/Lobby.tscn")
 var level_scene: Resource = load("res://src/level/Level.tscn")
 
-const MAX_PLAYERS = 5
+const MAX_PLAYERS = 6
+
+var debug_state: bool = false
 
 var username: String
 var game_ip: String
@@ -31,12 +33,22 @@ func _ready() -> void:
 	get_tree().connect("connection_failed", self, "_connection_failed")
 	get_tree().connect("connected_to_server", self, "_connected_to_server")
 
+func toggle_debug():
+	debug_state = !debug_state
+	for node in get_tree().get_nodes_in_group("debug_node"):
+		if node.has_method("_toggle_debug"):
+			node._toggle_debug(debug_state)
+
+func _process(delta):
+	if Input.is_action_just_pressed("toggle_debug"):
+		toggle_debug()
+
 func init_server(username: String, game_port: int) -> void:
 	self.game_ip = "localhost"
 	self.game_port = game_port
 	self.username = username
 	var peer := NetworkedMultiplayerENet.new()
-	peer.create_server(game_port, 1)
+	peer.create_server(game_port, MAX_PLAYERS - 1)
 	get_tree().network_peer = peer
 	var player: Utils.Player = Utils.Player.new(1, username)
 	player_list.append(player)

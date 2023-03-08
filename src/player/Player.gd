@@ -1,9 +1,10 @@
 extends KinematicBody2D
 
-onready var ground_rc_1 = $GroundRC1
-onready var ground_rc_2 = $GroundRC2
-onready var left_rc = $LeftRC
-onready var right_rc = $RightRC
+onready var ground_rc_1: Node = $GroundRC1
+onready var ground_rc_2: Node  = $GroundRC2
+onready var left_rc: Node = $LeftRC
+onready var right_rc: Node = $RightRC
+onready var username_label: Node = $UsernameLabel
 
 # PSEUDO CONSTANTS
 export var GRAVITY_VEC: Vector2 = Vector2(0.0, 10000.0)
@@ -37,6 +38,17 @@ var is_jumping: bool = false
 var is_wall_jumping: bool = false
 
 var velocity: Vector2 = Vector2.ZERO
+
+var username: String
+
+func preset_username(username: String):
+	self.username = username
+
+func _ready():
+	username_label.text = username
+
+func _toggle_debug(state: bool):
+	username_label.visible = state
 
 func _network_process():
 	if (is_network_master()):

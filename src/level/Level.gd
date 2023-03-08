@@ -1,6 +1,5 @@
 extends Node2D
 
-var player_shell_scene: Resource = load("res://src/player/PlayerShell.tscn")
 var player_scene: Resource = load("res://src/player/Player.tscn")
 
 onready var spawn_array: Array = [
@@ -20,6 +19,7 @@ func _ready():
 		var player = Gamestate.player_list[i]
 		var player_node: Node2D = player_scene.instance()
 		player_node.set_network_master(player.peer_id)
+		player_node.preset_username(player.username)
 		player_node.position = spawn_array[i % 6].position
 		player_nodes.append(player_node)
 		add_child(player_node)

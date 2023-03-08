@@ -20,7 +20,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="network-project-base"
+config/name="multiplayer-platformer-2d"
 run/main_scene="res://src/MainMenu.tscn"
 config/icon="res://icon.png"
 
@@ -35,6 +35,11 @@ multirun/window_distance=1270
 multirun/add_custom_args=true
 multirun/first_window_args="listen"
 multirun/other_window_args="join"
+
+[display]
+
+window/stretch/mode="2d"
+window/stretch/aspect="keep"
 
 [editor_plugins]
 
@@ -74,6 +79,11 @@ dash={
 jump={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":67,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+toggle_debug={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777246,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 
